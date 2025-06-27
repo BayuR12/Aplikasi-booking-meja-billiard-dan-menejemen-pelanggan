@@ -12,7 +12,7 @@ public class MainFrame extends JFrame {
     private final ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", currentLocale);
 
     public MainFrame() {
-        setTitle(bundle.getString("app.title"));
+        setTitle(bundle.getString("welcome")); // Menggunakan kunci "welcome" yang ada
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
@@ -23,7 +23,7 @@ public class MainFrame extends JFrame {
         add(title, BorderLayout.NORTH);
 
         // Panels
-        LoginPanel loginPanel = new LoginPanel(this);
+        LoginPanel loginPanel = new LoginPanel(this); // Memanggil constructor yang benar
         BookingForm bookingForm = new BookingForm();
 
         mainPanel.add(loginPanel, "login");

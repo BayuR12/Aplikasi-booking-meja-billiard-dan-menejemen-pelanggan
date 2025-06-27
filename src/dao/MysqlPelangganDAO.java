@@ -10,11 +10,13 @@ import java.util.List;
 public class MysqlPelangganDAO implements PelangganDAO {
     @Override
     public void insert(Pelanggan p) {
-        String sql = "INSERT INTO pelanggan (nama, email) VALUES (?, ?)";
+        // Kolom password ditambahkan ke query
+        String sql = "INSERT INTO pelanggan (nama, email, password) VALUES (?, ?, ?)";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, p.getNama());
             stmt.setString(2, p.getEmail());
+            stmt.setString(3, p.getPassword()); // Mengambil hash password
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -23,12 +25,14 @@ public class MysqlPelangganDAO implements PelangganDAO {
 
     @Override
     public void update(Pelanggan p) {
-        String sql = "UPDATE pelanggan SET nama = ?, email = ? WHERE id = ?";
+        // Kolom password ditambahkan ke query
+        String sql = "UPDATE pelanggan SET nama = ?, email = ?, password = ? WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, p.getNama());
             stmt.setString(2, p.getEmail());
-            stmt.setInt(3, p.getId());
+            stmt.setString(3, p.getPassword());
+            stmt.setInt(4, p.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,7 +62,8 @@ public class MysqlPelangganDAO implements PelangganDAO {
                 return new Pelanggan(
                         rs.getInt("id"),
                         rs.getString("nama"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getString("password")
                 );
             }
         } catch (SQLException e) {
@@ -78,7 +83,8 @@ public class MysqlPelangganDAO implements PelangganDAO {
                 list.add(new Pelanggan(
                         rs.getInt("id"),
                         rs.getString("nama"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getString("password")
                 ));
             }
         } catch (SQLException e) {
@@ -98,7 +104,8 @@ public class MysqlPelangganDAO implements PelangganDAO {
                 return new Pelanggan(
                         rs.getInt("id"),
                         rs.getString("nama"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getString("password")
                 );
             }
         } catch (SQLException e) {

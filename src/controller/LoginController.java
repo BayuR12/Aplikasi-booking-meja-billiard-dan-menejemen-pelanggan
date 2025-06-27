@@ -5,7 +5,7 @@ import dao.PelangganDAO;
 import service.HashingUtil;
 
 public class LoginController {
-    private PelangganDAO pelangganDAO;
+    private final PelangganDAO pelangganDAO;
 
     public LoginController(PelangganDAO pelangganDAO) {
         this.pelangganDAO = pelangganDAO;
@@ -15,8 +15,8 @@ public class LoginController {
         Pelanggan p = pelangganDAO.getByEmail(email);
         if (p != null) {
             String hashedPassword = HashingUtil.sha256(password);
-            // Simplifikasi: anggap password yang disimpan adalah hash dari email
-            return hashedPassword.equals(HashingUtil.sha256(p.getEmail()));
+            // Membandingkan hash dari password input dengan hash yang tersimpan di DB
+            return hashedPassword.equals(p.getPassword());
         }
         return false;
     }
