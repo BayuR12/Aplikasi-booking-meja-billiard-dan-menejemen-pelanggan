@@ -1,13 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
-/**
- *
- * @author HP
- */
+import model.Pelanggan;
+import dao.PelangganDAO;
+
+import java.util.List;
+
 public class PelangganController {
-    
+    private PelangganDAO pelangganDAO;
+
+    public PelangganController(PelangganDAO pelangganDAO) {
+        this.pelangganDAO = pelangganDAO;
+    }
+
+    public void tambahPelanggan(Pelanggan p) {
+        pelangganDAO.insert(p);
+    }
+
+    public List<Pelanggan> getSemuaPelanggan() {
+        return pelangganDAO.getAll();
+    }
+
+    public Pelanggan cariByEmail(String email) {
+        return pelangganDAO.getByEmail(email);
+    }
 }

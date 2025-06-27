@@ -1,20 +1,49 @@
 package ui;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class MainFrame extends JFrame {
+    private final CardLayout cardLayout = new CardLayout();
+    private final JPanel mainPanel = new JPanel(cardLayout);
+    private final Locale currentLocale = new Locale("id");
+    private final ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", currentLocale);
+
     public MainFrame() {
-        setTitle("Billiard Booking");
-        setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle(bundle.getString("app.title"));
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(600, 400);
         setLocationRelativeTo(null);
 
-        Locale locale = new Locale("id"); // Bisa diganti en, id, dll
-        ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
+        // Header
+        JLabel title = new JLabel(bundle.getString("welcome"), JLabel.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 20));
+        add(title, BorderLayout.NORTH);
 
-        JLabel welcomeLabel = new JLabel(bundle.getString("welcome"));
-        add(welcomeLabel);
+        // Panels
+        LoginPanel loginPanel = new LoginPanel(this);
+        BookingForm bookingForm = new BookingForm();
+
+        mainPanel.add(loginPanel, "login");
+        mainPanel.add(bookingForm, "booking");
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Footer Navigation
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton toLogin = new JButton("Login");
+        JButton toBooking = new JButton("Booking");
+
+        toLogin.addActionListener(e -> showPanel("login"));
+        toBooking.addActionListener(e -> showPanel("booking"));
+
+        footer.add(toLogin);
+        footer.add(toBooking);
+        add(footer, BorderLayout.SOUTH);
+    }
+
+    public void showPanel(String name) {
+        cardLayout.show(mainPanel, name);
     }
 }
