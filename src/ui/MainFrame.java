@@ -1,107 +1,96 @@
-// File: src/ui/MainFrame.java
-
 package ui;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ItemEvent;
-import javax.swing.JComboBox;
+import java.awt.event.ActionEvent;
+import java.util.Locale;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import service.BookingCheckerThread;
 
-public class MainFrame extends JFrame {
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
-    private LoginPanel loginPanel;
-    private BookingForm bookingForm;
-    private RegisterPanel registerPanel;
+public final class MainFrame extends JFrame {
+    private final CardLayout cardLayout = new CardLayout();
+    private final JPanel mainPanel = new JPanel(cardLayout);
+    private final LoginPanel loginPanel;
+    private final RegisterPanel registerPanel;
+    private final BookingForm bookingForm;
     private final LanguageManager lang = LanguageManager.getInstance();
-    private JLabel titleLabel, languageLabel;
-    private JComboBox<String> languageComboBox;
+
+    private final JMenuBar menuBar = new JMenuBar();
+    private final JMenu languageMenu = new JMenu();
+    private final JMenuItem indonesianMenuItem = new JMenuItem();
+    private final JMenuItem englishMenuItem = new JMenuItem();
 
     public MainFrame() {
-        initComponents();
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-    }
+        setTitle("Billiard Booking System");
+        setSize(500, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-    private void initComponents() {
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-        
+        // Initialize panels
         loginPanel = new LoginPanel(this);
-        bookingForm = new BookingForm(this);
         registerPanel = new RegisterPanel(this);
+        bookingForm = new BookingForm(this);
 
+        // Add panels to the main panel with CardLayout
         mainPanel.add(loginPanel, "login");
-        mainPanel.add(bookingForm, "booking");
         mainPanel.add(registerPanel, "register");
+        mainPanel.add(bookingForm, "booking");
 
         add(mainPanel);
 
-        titleLabel = new JLabel();
-        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        setupMenu();
+        
+        // Start the background thread for checking bookings
+        new BookingCheckerThread().start();
+    }
 
-        languageLabel = new JLabel();
-        String[] languages = {"Indonesia", "English"};
-        languageComboBox = new JComboBox<>(languages);
-
-        JPanel topPanel = new JPanel(new BorderLayout());
-        JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        languagePanel.add(languageLabel);
-        languagePanel.add(languageComboBox);
-
-        topPanel.add(titleLabel, BorderLayout.CENTER);
-        topPanel.add(languagePanel, BorderLayout.EAST);
-        add(topPanel, BorderLayout.NORTH);
-
-        languageComboBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                String selectedLanguage = (String) e.getItem();
-                if (selectedLanguage.equals("English")) {
-                    lang.setLanguage("en", "US");
-                } else {
-                    lang.setLanguage("id", "ID");
-                }
-                // Panggil metode untuk memperbarui SEMUA teks di aplikasi
-                updateTexts();
-            }
+    private void setupMenu() {
+        indonesianMenuItem.addActionListener((ActionEvent e) -> {
+            lang.setLocale(new Locale("in", "ID"));
+            updateUI();
         });
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
-        
-        // Panggil updateTexts() sekali saat startup untuk mengatur teks awal
-        updateTexts();
+        englishMenuItem.addActionListener((ActionEvent e) -> {
+            lang.setLocale(new Locale("en", "US"));
+            updateUI();
+        });
+
+        languageMenu.add(indonesianMenuItem);
+        languageMenu.add(englishMenuItem);
+        menuBar.add(languageMenu);
+        setJMenuBar(menuBar);
+        updateLanguageMenuItem(); // This call will now work correctly
+    }
+    
+    /**
+     * This method contains the fix.
+     * It updates the text of the language menu items based on the current locale.
+     */
+    public void updateLanguageMenuItem() {
+        // Implementasi yang benar, bukan "throw new UnsupportedOperationException"
+        languageMenu.setText(lang.getString("language"));
+        indonesianMenuItem.setText(lang.getString("indonesian"));
+        englishMenuItem.setText(lang.getString("english"));
     }
 
     public void showPanel(String panelName) {
         cardLayout.show(mainPanel, panelName);
     }
 
-    private void updateTexts() {
-        // Update teks di MainFrame
-        setTitle(lang.getString("app.title"));
-        titleLabel.setText(lang.getString("welcome"));
-        languageLabel.setText(lang.getString("language") + ":");
-
-        // Memerintahkan setiap panel anak untuk memperbarui teks mereka juga
-        if (loginPanel != null) loginPanel.updateTexts();
-        if (bookingForm != null) bookingForm.updateTexts();
-        if (registerPanel != null) registerPanel.updateTexts();
-
-        revalidate();
-        repaint();
+    /**
+     * Updates the texts on all panels when the language is changed.
+     */
+    private void updateUI() {
+        loginPanel.updateTexts();
+        registerPanel.updateTexts();
+        bookingForm.updateTexts();
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
-    }
-
-    void updateLanguageMenuItem() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
