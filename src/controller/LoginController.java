@@ -1,8 +1,7 @@
 package controller;
 
-import model.Pelanggan;
 import dao.PelangganDAO;
-import service.HashingUtil;
+import model.Pelanggan;
 
 public class LoginController {
     private final PelangganDAO pelangganDAO;
@@ -13,10 +12,9 @@ public class LoginController {
 
     public boolean login(String email, String password) {
         Pelanggan p = pelangganDAO.getByEmail(email);
+
         if (p != null) {
-            String hashedPassword = HashingUtil.sha256(password);
-            // Membandingkan hash dari password input dengan hash yang tersimpan di DB
-            return hashedPassword.equals(p.getPassword());
+            return password.equals(p.getPassword());
         }
         return false;
     }

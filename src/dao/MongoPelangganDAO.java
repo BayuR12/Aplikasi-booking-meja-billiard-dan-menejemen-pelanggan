@@ -5,6 +5,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import model.Pelanggan;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import util.MongoUtil;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class MongoPelangganDAO implements PelangganDAO {
 
-    private final MongoCollection<Document> collection = MongoUtil.getDatabase().getCollection("pelanggan");
+    private final MongoCollection<Document> collection = MongoUtil.getDatabase().getCollection("Pelanggan");
 
     // Helper untuk mengubah Document menjadi objek Pelanggan
     private Pelanggan docToPelanggan(Document doc) {

@@ -5,45 +5,70 @@ import dao.MongoPelangganDAO;
 import javax.swing.*;
 import java.awt.*;
 
-
-public class LoginPanel extends JPanel {
-    private final MainFrame mainFrame; // Referensi ke MainFrame
+public final class LoginPanel extends JPanel {
+    private final MainFrame mainFrame;
     private final LoginController loginController;
+    private final LanguageManager lang = LanguageManager.getInstance();
+
+    // Deklarasikan komponen sebagai field
+    private JLabel userLabel, passLabel;
+    private JButton registerBtn, loginBtn;
 
     public LoginPanel(MainFrame frame) {
         this.mainFrame = frame;
         this.loginController = new LoginController(new MongoPelangganDAO());
 
-        setLayout(new GridLayout(3, 2, 5, 5)); // Menambahkan jarak antar komponen
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Menambahkan padding
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel userLabel = new JLabel("Email:");
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        userLabel = new JLabel();
         JTextField userField = new JTextField();
-        JLabel passLabel = new JLabel("Password:");
+        passLabel = new JLabel();
         JPasswordField passField = new JPasswordField();
-        JButton loginBtn = new JButton("Login");
+        
+        fieldsPanel.add(userLabel);
+        fieldsPanel.add(userField);
+        fieldsPanel.add(passLabel);
+        fieldsPanel.add(passField);
 
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        registerBtn = new JButton();
+        loginBtn = new JButton();
+        
+        buttonPanel.add(registerBtn);
+        buttonPanel.add(loginBtn);
+        
+        add(fieldsPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        registerBtn.addActionListener(e -> mainFrame.showPanel("register"));
         loginBtn.addActionListener(e -> {
             String email = userField.getText();
             String password = new String(passField.getPassword());
-            
+
             if (email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Email dan password tidak boleh kosong.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, lang.getString("emptyFields"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             boolean loginSuccess = loginController.login(email, password);
 
             if (loginSuccess) {
-                JOptionPane.showMessageDialog(this, "Login Berhasil!");
-                mainFrame.showPanel("booking"); // Pindah ke panel booking jika berhasil
+                JOptionPane.showMessageDialog(this, lang.getString("loginSuccess"), lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);
+                mainFrame.showPanel("booking");
             } else {
-                JOptionPane.showMessageDialog(this, "Login Gagal. Cek kembali email dan password Anda.", "Login Gagal", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, lang.getString("loginFailed"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
             }
         });
+        
+        updateTexts(); // Atur teks awal
+    }
 
-        add(userLabel); add(userField);
-        add(passLabel); add(passField);
-        add(new JLabel()); add(loginBtn);
+    public void updateTexts() {
+        userLabel.setText(lang.getString("email"));
+        passLabel.setText(lang.getString("password"));
+        registerBtn.setText(lang.getString("register"));
+        loginBtn.setText(lang.getString("login"));
     }
 }
