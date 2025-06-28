@@ -11,15 +11,12 @@ public class MainFrame extends JFrame {
 
     // Deklarasikan SEMUA komponen UI yang teksnya perlu diubah sebagai field
     private JLabel titleLabel;
-    private JLabel languageLabel; // Label "Bahasa:" dideklarasikan sebagai field
+    private JLabel languageLabel; // <-- Label "Bahasa:" ditambahkan sebagai field
     private JComboBox<String> languageComboBox;
     
     private LoginPanel loginPanel;
     private BookingForm bookingForm;
     private RegisterPanel registerPanel;
-    
-    // Flag untuk mencegah listener berjalan saat kita mengubah item secara programatis
-    private boolean isUpdatingComboBox = false;
 
     public MainFrame() {
         // Panggil metode untuk membangun komponen UI
@@ -36,6 +33,7 @@ public class MainFrame extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.add(titleLabel, BorderLayout.CENTER);
 
+        // Dropdown bahasa
         JPanel languageSelectionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         languageSelectionPanel.add(languageLabel); // Tambahkan label ke panel
         
@@ -59,8 +57,7 @@ public class MainFrame extends JFrame {
         
         // Listener untuk JComboBox yang memanggil updateTexts() saat bahasa diubah
         languageComboBox.addItemListener(e -> {
-            // Hanya proses jika listener tidak sedang di-trigger oleh kode dan item benar-benar dipilih
-            if (!isUpdatingComboBox && e.getStateChange() == ItemEvent.SELECTED) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
                 String selectedLanguage = (String) e.getItem();
                 if (selectedLanguage.equals("English")) {
                     lang.setLanguage("en", "US");
@@ -81,24 +78,11 @@ public class MainFrame extends JFrame {
         updateTexts();
     }
     
-    /**
-     * Metode ini berfungsi sebagai pusat untuk memperbarui semua teks
-     * di seluruh komponen aplikasi.
-     */
     private void updateTexts() {
         // Update teks di MainFrame
         setTitle(lang.getString("app.title"));
         titleLabel.setText(lang.getString("welcome"));
-        languageLabel.setText(lang.getString("language") + ":");
-        
-        // Sinkronkan pilihan JComboBox dengan bahasa saat ini
-        isUpdatingComboBox = true; // Matikan listener sementara
-        if ("id".equals(lang.getCurrentLocale().getLanguage())) {
-            languageComboBox.setSelectedItem("Indonesia");
-        } else {
-            languageComboBox.setSelectedItem("English");
-        }
-        isUpdatingComboBox = false; // Hidupkan kembali listener
+        languageLabel.setText(lang.getString("language") + ":"); // <-- Perbaikan ada di sini
         
         // Memerintahkan setiap panel anak untuk memperbarui teks mereka juga
         if (loginPanel != null) loginPanel.updateTexts();
@@ -106,7 +90,7 @@ public class MainFrame extends JFrame {
         if (registerPanel != null) registerPanel.updateTexts();
     }
 
-   
+    
     public void showPanel(String name) {
         cardLayout.show(mainPanel, name);
     }
