@@ -2,49 +2,39 @@ package ui;
 
 import controller.BookingController;
 import dao.MongoBookingDAO;
+import service.MongoLogService; // <-- Tambahkan impor ini
 import javax.swing.*;
 import java.awt.*;
 import java.time.format.DateTimeParseException;
 
 public final class BookingForm extends JPanel {
+    private final MainFrame mainFrame;
     private final BookingController bookingController;
     private final LanguageManager lang = LanguageManager.getInstance();
 
-    // Deklarasikan komponen sebagai field
-    private JLabel mejaLabel, pelangganLabel, waktuLabel;
-    private JButton submitBtn, backToLoginBtn; // backToLoginBtn ditambahkan sebagai field
-    private final MainFrame mainFrame;
+    private final JLabel mejaLabel = new JLabel();
+    private final JLabel pelangganLabel = new JLabel();
+    private final JLabel waktuLabel = new JLabel();
+    private final JTextField mejaField = new JTextField(10);
+    private final JTextField pelangganField = new JTextField(10);
+    private final JTextField waktuField = new JTextField(10);
+    private final JButton submitBtn = new JButton();
 
     public BookingForm(MainFrame frame) {
         this.mainFrame = frame;
         this.bookingController = new BookingController(new MongoBookingDAO());
-        
-        setLayout(new GridLayout(4, 2, 5, 5));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        mejaLabel = new JLabel();
-        JTextField mejaField = new JTextField();
-        pelangganLabel = new JLabel();
-        JTextField pelangganField = new JTextField();
-        waktuLabel = new JLabel();
-        JTextField waktuField = new JTextField();
-        submitBtn = new JButton();
-        backToLoginBtn = new JButton(); // Inisialisasi field, bukan variabel lokal
-
-        backToLoginBtn.addActionListener(e -> mainFrame.showPanel("login"));
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(backToLoginBtn);
-        buttonPanel.add(submitBtn);
-
-        add(mejaLabel);
-        add(mejaField);
-        add(pelangganLabel);
-        add(pelangganField);
-        add(waktuLabel);
-        add(waktuField);
-        add(new JLabel()); 
-        add(buttonPanel); 
+        gbc.gridx = 0; gbc.gridy = 0; add(mejaLabel, gbc);
+        gbc.gridx = 1; gbc.gridy = 0; add(mejaField, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; add(pelangganLabel, gbc);
+        gbc.gridx = 1; gbc.gridy = 1; add(pelangganField, gbc);
+        gbc.gridx = 0; gbc.gridy = 2; add(waktuLabel, gbc);
+        gbc.gridx = 1; gbc.gridy = 2; add(waktuField, gbc);
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; add(submitBtn, gbc);
+        waktuField.setToolTipText(lang.getString("timeFormatTooltip"));
 
         submitBtn.addActionListener(e -> {
             try {
@@ -53,15 +43,17 @@ public final class BookingForm extends JPanel {
                 String waktuStr = waktuField.getText();
 
                 if (waktuStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, lang.getString("allFieldsRequired"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, lang.getString("emptyFields"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 boolean success = bookingController.buatBooking(meja, pelangganId, waktuStr);
 
                 if (success) {
+                    MongoLogService.log("Booking created for table " + meja + " by customer ID " + pelangganId); // <-- Tambahkan log
                     JOptionPane.showMessageDialog(this, lang.getString("bookingSuccess") + " " + meja, lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);
                 } else {
+                    MongoLogService.log("Failed booking attempt for table " + meja); // <-- Tambahkan log
                     JOptionPane.showMessageDialog(this, lang.getString("bookingFailed"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
@@ -71,14 +63,15 @@ public final class BookingForm extends JPanel {
             }
         });
         
-        updateTexts(); // Atur teks awal
+        updateTexts();
     }
     
-    public void updateTexts(){
+    public void updateTexts() {
         mejaLabel.setText(lang.getString("tableNumber"));
-        pelangganLabel.setText(lang.getString("customerId"));
-        waktuLabel.setText(lang.getString("bookingTime"));
-        submitBtn.setText(lang.getString("submitBooking"));
-        backToLoginBtn.setText(lang.getString("backToLogin")); // Baris ini ditambahkan untuk memperbaiki tombol
+        pelangganLabel.setText(lang.getString("customerID"));
+        waktuLabel.setText(lang.getString("time"));
+        submitBtn.setText(lang.getString("submit"));
+        waktuField.setToolTipText(lang.getString("timeFormatTooltip"));
+        mainFrame.updateLanguageMenuItem();
     }
 }
