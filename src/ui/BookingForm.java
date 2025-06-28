@@ -12,7 +12,7 @@ public final class BookingForm extends JPanel {
 
     // Deklarasikan komponen sebagai field
     private JLabel mejaLabel, pelangganLabel, waktuLabel;
-    private JButton submitBtn;
+    private JButton submitBtn, backToLoginBtn; // backToLoginBtn ditambahkan sebagai field
     private final MainFrame mainFrame;
 
     public BookingForm(MainFrame frame) {
@@ -29,7 +29,7 @@ public final class BookingForm extends JPanel {
         waktuLabel = new JLabel();
         JTextField waktuField = new JTextField();
         submitBtn = new JButton();
-        JButton backToLoginBtn = new JButton();
+        backToLoginBtn = new JButton(); // Inisialisasi field, bukan variabel lokal
 
         backToLoginBtn.addActionListener(e -> mainFrame.showPanel("login"));
         
@@ -79,5 +79,6 @@ public final class BookingForm extends JPanel {
         pelangganLabel.setText(lang.getString("customerId"));
         waktuLabel.setText(lang.getString("bookingTime"));
         submitBtn.setText(lang.getString("submitBooking"));
+        backToLoginBtn.setText(lang.getString("backToLogin")); // Baris ini ditambahkan untuk memperbaiki tombol
     }
 }

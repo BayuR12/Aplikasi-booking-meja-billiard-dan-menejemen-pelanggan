@@ -4,6 +4,9 @@ import controller.LoginController;
 import dao.MongoPelangganDAO;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
 
 public final class LoginPanel extends JPanel {
     private final MainFrame mainFrame;

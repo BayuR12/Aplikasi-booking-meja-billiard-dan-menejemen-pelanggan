@@ -12,5 +12,61 @@
                 <root id="test.src.dir"/>
             </test-roots>
         </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Akun</word>
+            <word>Anda</word>
+            <word>angka</word>
+            <word>Aplikasi</word>
+            <word>atau</word>
+            <word>Bahasa</word>
+            <word>Berhasil</word>
+            <word>berupa</word>
+            <word>Biliard</word>
+            <word>boleh</word>
+            <word>Cek</word>
+            <word>cocok</word>
+            <word>Daftar</word>
+            <word>dan</word>
+            <word>Datang</word>
+            <word>DDTHH</word>
+            <word>dibuat</word>
+            <word>diisi</word>
+            <word>dipesan</word>
+            <word>Gagal</word>
+            <word>gunakan</word>
+            <word>harus</word>
+            <word>Informasi</word>
+            <word>ini</word>
+            <word>Kata</word>
+            <word>ke</word>
+            <word>Kembali</word>
+            <word>Kesalahan</word>
+            <word>Konfirmasi</word>
+            <word>kosong</word>
+            <word>Lengkap</word>
+            <word>Masuk</word>
+            <word>Meja</word>
+            <word>membuat</word>
+            <word>mungkin</word>
+            <word>nContoh</word>
+            <word>nGunakan</word>
+            <word>Nomor</word>
+            <word>pada</word>
+            <word>Pelanggan</word>
+            <word>Registrasi</word>
+            <word>salah</word>
+            <word>Sandi</word>
+            <word>Selamat</word>
+            <word>Semua</word>
+            <word>Silakan</word>
+            <word>Sistem</word>
+            <word>sudah</word>
+            <word>terdaftar</word>
+            <word>tersebut</word>
+            <word>tidak</word>
+            <word>untuk</word>
+            <word>Waktu</word>
+            <word>YYYY</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

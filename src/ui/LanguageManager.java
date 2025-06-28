@@ -1,45 +1,33 @@
+// File: ui/LanguageManager.java
 package ui;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class LanguageManager {
-    private static LanguageManager instance;
+    private static final LanguageManager INSTANCE = new LanguageManager();
     private ResourceBundle bundle;
-    private Locale currentLocale;
 
     private LanguageManager() {
-        // Bahasa default adalah Bahasa Indonesia
-        setLanguage("id", "ID");
+        // Atur bahasa default saat pertama kali dijalankan
+        setLanguage("id", "ID"); 
     }
 
-    public static synchronized LanguageManager getInstance() {
-        if (instance == null) {
-            instance = new LanguageManager();
-        }
-        return instance;
-    }
-
-    public ResourceBundle getBundle() {
-        return bundle;
-    }
-    
-    public Locale getCurrentLocale() {
-        return currentLocale;
+    public static LanguageManager getInstance() {
+        return INSTANCE;
     }
 
     public void setLanguage(String language, String country) {
-        currentLocale = new Locale(language, country);
-        // PERBAIKAN PENTING: Membersihkan cache untuk memaksa ResourceBundle memuat ulang file.
-        ResourceBundle.clearCache();
-        bundle = ResourceBundle.getBundle("i18n.messages", currentLocale);
+        Locale locale = new Locale(language, country);
+        // Ini adalah baris KUNCI: Muat ulang resource bundle dengan locale yang baru
+        bundle = ResourceBundle.getBundle("messages", locale); 
     }
 
     public String getString(String key) {
         try {
             return bundle.getString(key);
         } catch (Exception e) {
-            // Jika kunci tidak ditemukan, kembalikan kunci itu sendiri agar mudah di-debug
+            // Jika key tidak ditemukan, kembalikan key itu sendiri agar mudah di-debug
             return key;
         }
     }
