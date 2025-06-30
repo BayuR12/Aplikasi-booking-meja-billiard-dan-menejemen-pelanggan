@@ -4,25 +4,27 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/BookingDAO.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/ui/LanguageManager.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/GenericDAO.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/PelangganDAO.java</file>
-            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/service/HashingUtil.java</file>
-            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/i18n/messages_id.properties</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/service/BookingCheckerThread.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/MongoPelangganDAO.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/controller/BookingController.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/ui/MainFrame.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/messages_in_ID.properties</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/model/Pelanggan.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/util/MongoUtil.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/controller/LoginController.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/model/Booking.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/service/MongoLogService.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/ui/BookingForm.java</file>
-            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/MysqlPelangganDAO.java</file>
-            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/MysqlBookingDAO.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/ui/RegisterPanel.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/dao/MongoBookingDAO.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/Main.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/ui/LoginPanel.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/util/DBUtil.java</file>
+            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/messages_en_US.properties</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/controller/PelangganController.java</file>
-            <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/i18n/messages_en.properties</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/model/User.java</file>
             <file>file:/C:/Users/HP/Documents/NetBeansProjects/billiardApp/src/crypto/CryptoUtil.java</file>
         </group>

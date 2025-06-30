@@ -2,8 +2,6 @@ package ui;
 
 import controller.LoginController;
 import dao.MongoPelangganDAO;
-import service.MongoLogService; // <-- Tambahkan impor ini
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JPanel;
@@ -15,46 +13,37 @@ public final class LoginPanel extends JPanel {
     private final LoginController loginController;
     private final LanguageManager lang = LanguageManager.getInstance();
 
-    private final JLabel userLabel = new JLabel();
-    private final JLabel passLabel = new JLabel();
-    private final JTextField userField = new JTextField(20);
-    private final JPasswordField passField = new JPasswordField(20);
-    private final JButton loginBtn = new JButton();
-    private final JButton registerBtn = new JButton();
+    // Deklarasikan komponen sebagai field
+    private JLabel userLabel, passLabel;
+    private JButton registerBtn, loginBtn;
 
     public LoginPanel(MainFrame frame) {
         this.mainFrame = frame;
         this.loginController = new LoginController(new MongoPelangganDAO());
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(userLabel, gbc);
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        userLabel = new JLabel();
+        JTextField userField = new JTextField();
+        passLabel = new JLabel();
+        JPasswordField passField = new JPasswordField();
+        
+        fieldsPanel.add(userLabel);
+        fieldsPanel.add(userField);
+        fieldsPanel.add(passLabel);
+        fieldsPanel.add(passField);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        add(userField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        add(passLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        add(passField, gbc);
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(loginBtn);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        registerBtn = new JButton();
+        loginBtn = new JButton();
+        
         buttonPanel.add(registerBtn);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(buttonPanel, gbc);
+        buttonPanel.add(loginBtn);
+        
+        add(fieldsPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         registerBtn.addActionListener(e -> mainFrame.showPanel("register"));
         loginBtn.addActionListener(e -> {
@@ -69,23 +58,20 @@ public final class LoginPanel extends JPanel {
             boolean loginSuccess = loginController.login(email, password);
 
             if (loginSuccess) {
-                MongoLogService.log("User logged in successfully: " + email); // <-- Tambahkan log
                 JOptionPane.showMessageDialog(this, lang.getString("loginSuccess"), lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);
                 mainFrame.showPanel("booking");
             } else {
-                MongoLogService.log("Failed login attempt for email: " + email); // <-- Tambahkan log
                 JOptionPane.showMessageDialog(this, lang.getString("loginFailed"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
             }
         });
         
-        updateTexts();
+        updateTexts(); // Atur teks awal
     }
 
     public void updateTexts() {
         userLabel.setText(lang.getString("email"));
         passLabel.setText(lang.getString("password"));
-        loginBtn.setText(lang.getString("login"));
         registerBtn.setText(lang.getString("register"));
-        mainFrame.updateLanguageMenuItem();
+        loginBtn.setText(lang.getString("login"));
     }
 }
