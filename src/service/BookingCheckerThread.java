@@ -1,26 +1,34 @@
 package service;
 
 public class BookingCheckerThread extends Thread {
-    private final int meja;
+    // volatile memastikan variabel ini selalu dibaca dari memori utama
+    private volatile boolean running = true;
 
-    public BookingCheckerThread(int meja) {
-        this.meja = meja;
+    
+    public BookingCheckerThread() {
+        // Konstruktor ini sekarang kosong dan aman untuk dipanggil.
     }
 
-    public BookingCheckerThread() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+    public void stopThread() {
+        running = false;
+        // Interupsi thread jika sedang dalam kondisi sleep
+        interrupt();
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             try {
-                System.out.println("Checking availability for meja: " + meja);
-                Thread.sleep(10000); // 10 detik interval
+                // Anda bisa menambahkan logika pengecekan booking di sini nanti
+                System.out.println("Booking checker thread is running...");
+                Thread.sleep(30000); // Cek setiap 30 detik
             } catch (InterruptedException e) {
-                System.out.println("Checker interrupted");
-                break;
+                // Jika diinterupsi, hentikan loop
+                running = false;
+                System.out.println("Booking checker thread was interrupted and is stopping.");
             }
         }
+        System.out.println("Booking checker thread has stopped.");
     }
 }

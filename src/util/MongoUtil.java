@@ -9,20 +9,23 @@ public class MongoUtil {
     private static final String DATABASE_NAME = "billiard";
     private static MongoClient mongoClient;
 
-    // Inisialisasi koneksi saat kelas dimuat
     static {
         try {
             mongoClient = MongoClients.create(CONNECTION_STRING);
         } catch (Exception e) {
             System.err.println("Gagal terhubung ke MongoDB.");
+            e.printStackTrace();
         }
     }
 
-//    /**
-//     * Mengambil instance database "billiard".
-//     * @return MongoDatabase instance.
-//     */
     public static MongoDatabase getDatabase() {
         return mongoClient.getDatabase(DATABASE_NAME);
+    }
+
+    public static void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+            System.out.println("Koneksi MongoDB ditutup.");
+        }
     }
 }

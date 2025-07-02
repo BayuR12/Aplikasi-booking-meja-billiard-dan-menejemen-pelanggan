@@ -1,12 +1,14 @@
 package controller;
 
-import model.Booking;
 import dao.BookingDAO;
-
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import model.Booking;
+import service.MongoLogService;
 
 public class BookingController {
-    private BookingDAO bookingDAO;
+    private final BookingDAO bookingDAO;
 
     public BookingController(BookingDAO bookingDAO) {
         this.bookingDAO = bookingDAO;
@@ -16,13 +18,35 @@ public class BookingController {
         try {
             LocalDateTime waktu = LocalDateTime.parse(waktuStr);
             if (bookingDAO.isMejaAvailable(meja, waktu)) {
-                Booking booking = new Booking(0, meja, pelangganId, waktu);
+                Booking booking = new Booking(meja, pelangganId, waktu);
                 bookingDAO.insert(booking);
+                MongoLogService.log("New booking created for table " + meja + " at " + waktu);
                 return true;
             }
+        } catch (DateTimeParseException e) {
+            System.err.println("Invalid date time format: " + waktuStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean updateBooking(String id, int meja, int pelangganId, String waktuStr) {
+        try {
+            LocalDateTime waktu = LocalDateTime.parse(waktuStr);
+            Booking booking = new Booking(id, meja, pelangganId, waktu);
+            bookingDAO.update(booking);
+            MongoLogService.log("Booking " + id + " updated.");
+            return true;
+        } catch (DateTimeParseException e) {
+            System.err.println("Invalid date time format: " + waktuStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Booking> getAllBookings() {
+        return bookingDAO.getAll();
     }
 }
