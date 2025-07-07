@@ -14,6 +14,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import util.MongoUtil;
 
+// Pastikan kelas ini mengimplementasikan interface BookingDAO
 public class MongoBookingDAO implements BookingDAO {
 
     private final MongoDatabase db = MongoUtil.getDatabase();
@@ -38,6 +39,20 @@ public class MongoBookingDAO implements BookingDAO {
                 ));
     }
 
+    // >>> IMPLEMENTASI METHOD DELETE DIMULAI DI SINI <<<
+    @Override
+    public void delete(String id) {
+        try {
+            // Konversi String ID menjadi ObjectId untuk query ke MongoDB
+            ObjectId objectId = new ObjectId(id);
+            collection.deleteOne(Filters.eq("_id", objectId));
+            System.out.println("Booking dengan ID " + id + " berhasil dihapus.");
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error: ID tidak valid. " + e.getMessage());
+        }
+    }
+    // >>> IMPLEMENTASI METHOD DELETE SELESAI DI SINI <<<
+
     private Booking docToBooking(Document doc) {
         if (doc == null) return null;
         
@@ -45,7 +60,6 @@ public class MongoBookingDAO implements BookingDAO {
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDateTime();
         
-        // Menggunakan ObjectId sebagai ID unik
         return new Booking(
             doc.getObjectId("_id").toHexString(), 
             doc.getInteger("meja"), 
@@ -57,22 +71,10 @@ public class MongoBookingDAO implements BookingDAO {
     @Override
     public List<Booking> getAll() {
         List<Booking> bookingList = new ArrayList<>();
-        for (Document doc : collection.find().sort(new Document("waktu", 1))) { // Diurutkan berdasarkan waktu
+        for (Document doc : collection.find().sort(new Document("waktu", 1))) {
             bookingList.add(docToBooking(doc));
         }
         return bookingList;
-    }
-    
-    @Override
-    public Booking get(int id) {
-        // Implementasi ini mungkin perlu diubah karena ID sekarang String
-        // Untuk saat ini, kita biarkan tidak terpakai
-        return null;
-    }
-
-    @Override
-    public void delete(int id) {
-        // Implementasi ini juga perlu disesuaikan untuk ObjectId
     }
 
     @Override

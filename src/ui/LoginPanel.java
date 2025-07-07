@@ -4,18 +4,16 @@ import controller.LoginController;
 import dao.MongoPelangganDAO;
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
 
 public final class LoginPanel extends JPanel {
     private final MainFrame mainFrame;
     private final LoginController loginController;
     private final LanguageManager lang = LanguageManager.getInstance();
 
-    // Deklarasikan komponen sebagai field
     private JLabel userLabel, passLabel;
     private JButton registerBtn, loginBtn;
+    private JTextField userField;
+    private JPasswordField passField;
 
     public LoginPanel(MainFrame frame) {
         this.mainFrame = frame;
@@ -26,9 +24,9 @@ public final class LoginPanel extends JPanel {
 
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 2, 5, 5));
         userLabel = new JLabel();
-        JTextField userField = new JTextField();
+        userField = new JTextField();
         passLabel = new JLabel();
-        JPasswordField passField = new JPasswordField();
+        passField = new JPasswordField();
         
         fieldsPanel.add(userLabel);
         fieldsPanel.add(userField);
@@ -46,16 +44,19 @@ public final class LoginPanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
 
         registerBtn.addActionListener(e -> mainFrame.showPanel("register"));
+        
         loginBtn.addActionListener(e -> {
             String email = userField.getText();
-            String password = new String(passField.getPassword());
+            char[] password = passField.getPassword();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || password.length == 0) {
                 JOptionPane.showMessageDialog(this, lang.getString("emptyFields"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             boolean loginSuccess = loginController.login(email, password);
+
+            java.util.Arrays.fill(password, ' ');
 
             if (loginSuccess) {
                 JOptionPane.showMessageDialog(this, lang.getString("loginSuccess"), lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);
@@ -65,7 +66,7 @@ public final class LoginPanel extends JPanel {
             }
         });
         
-        updateTexts(); // Atur teks awal
+        updateTexts();
     }
 
     public void updateTexts() {

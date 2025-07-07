@@ -6,9 +6,10 @@ import model.Booking;
 
 public interface BookingDAO {
     void insert(Booking b);
-    void update(Booking b); // Ditambahkan
-    Booking get(int id);
-    List<Booking> getAll(); // Ditambahkan
-    void delete(int id);
+    void update(Booking b);
+    List<Booking> getAll();
+    
+    void delete(String id); 
+    
     boolean isMejaAvailable(int tableNumber, LocalDateTime time);
 }

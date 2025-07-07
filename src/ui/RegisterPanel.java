@@ -6,6 +6,7 @@ import model.Pelanggan;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import util.PasswordUtil;
 
 public final class RegisterPanel extends JPanel {
     private final MainFrame mainFrame;
@@ -72,7 +73,8 @@ public final class RegisterPanel extends JPanel {
                 return;
             }
 
-            Pelanggan newPelanggan = new Pelanggan(0, nama, email, new String(password));
+            String hashedPassword = PasswordUtil.hashPassword(new String(password));
+            Pelanggan newPelanggan = new Pelanggan(0, nama, email, hashedPassword);
             pelangganController.tambahPelanggan(newPelanggan);
 
             JOptionPane.showMessageDialog(this, lang.getString("registrationSuccess"), lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);

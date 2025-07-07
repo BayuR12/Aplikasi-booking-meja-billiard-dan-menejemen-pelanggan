@@ -46,6 +46,18 @@ public class BookingController {
         return false;
     }
 
+    // >>> METHOD DELETE BARU DIMULAI DI SINI <<<
+    public void deleteBooking(String id) {
+        try {
+            bookingDAO.delete(id);
+            MongoLogService.log("Booking " + id + " deleted.");
+        } catch (Exception e) {
+            System.err.println("Error deleting booking: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    // >>> METHOD DELETE BARU SELESAI DI SINI <<<
+
     public List<Booking> getAllBookings() {
         return bookingDAO.getAll();
     }

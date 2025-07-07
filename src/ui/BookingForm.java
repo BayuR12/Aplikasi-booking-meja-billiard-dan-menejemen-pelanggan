@@ -20,12 +20,11 @@ public final class BookingForm extends JPanel {
     // Komponen UI
     private JTable bookingTable;
     private DefaultTableModel tableModel;
-    private JButton addOrUpdateBtn, clearBtn, backToLoginBtn, refreshBtn;
+    private JButton addOrUpdateBtn, clearBtn, backToLoginBtn, refreshBtn, deleteBtn;
     private JTextField mejaField, pelangganField, waktuField;
     private JLabel mejaLabel, pelangganLabel, waktuLabel;
     private String selectedBookingId = null;
 
-    // Variabel untuk menyimpan referensi border agar mudah diubah
     private TitledBorder formTitleBorder;
     private TitledBorder tableTitleBorder;
 
@@ -35,11 +34,9 @@ public final class BookingForm extends JPanel {
         
         setLayout(new BorderLayout(10, 10));
         
-        // Panel Form Input
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(4, 2, 10, 10));
         
-        // Buat border dan simpan referensinya
         formTitleBorder = BorderFactory.createTitledBorder(lang.getString("bookingData"));
         formPanel.setBorder(BorderFactory.createCompoundBorder(formTitleBorder, BorderFactory.createEmptyBorder(10,10,10,10)));
 
@@ -63,10 +60,7 @@ public final class BookingForm extends JPanel {
         formPanel.add(addOrUpdateBtn);
         formPanel.add(clearBtn);
 
-        // Panel Tabel
         JPanel tablePanel = new JPanel(new BorderLayout());
-        
-        // Buat border dan simpan referensinya
         tableTitleBorder = BorderFactory.createTitledBorder(lang.getString("bookingList"));
         tablePanel.setBorder(tableTitleBorder);
 
@@ -79,17 +73,19 @@ public final class BookingForm extends JPanel {
         };
         bookingTable = new JTable(tableModel);
         bookingTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         bookingTable.getColumnModel().getColumn(0).setMinWidth(0);
         bookingTable.getColumnModel().getColumn(0).setMaxWidth(0);
         bookingTable.getColumnModel().getColumn(0).setWidth(0);
 
         tablePanel.add(new JScrollPane(bookingTable), BorderLayout.CENTER);
         
-        // Panel Tombol Bawah
         JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         refreshBtn = new JButton();
+        deleteBtn = new JButton();
         backToLoginBtn = new JButton();
         bottomButtonPanel.add(refreshBtn);
+        bottomButtonPanel.add(deleteBtn);
         bottomButtonPanel.add(backToLoginBtn);
 
         add(formPanel, BorderLayout.NORTH);
@@ -103,14 +99,14 @@ public final class BookingForm extends JPanel {
             clearForm();
         });
         clearBtn.addActionListener(e -> clearForm());
+        addOrUpdateBtn.addActionListener(e -> saveBooking());
+        deleteBtn.addActionListener(e -> deleteBooking());
 
         bookingTable.getSelectionModel().addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting() && bookingTable.getSelectedRow() != -1) {
                 populateFormFromTable();
             }
         });
-
-        addOrUpdateBtn.addActionListener(e -> saveBooking());
         
         updateTexts();
         loadBookings();
@@ -138,33 +134,46 @@ public final class BookingForm extends JPanel {
             int pelangganId = Integer.parseInt(pelangganField.getText());
             String waktuStr = waktuField.getText();
 
-            if (waktuStr.isEmpty() || mejaField.getText().isEmpty() || pelangganField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, lang.getString("allFieldsRequired"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            LocalDateTime.parse(waktuStr);
-
-            boolean success;
-            if (selectedBookingId != null) { // Mode Edit
-                success = bookingController.updateBooking(selectedBookingId, meja, pelangganId, waktuStr);
-            } else { // Mode Tambah
-                success = bookingController.buatBooking(meja, pelangganId, waktuStr);
-            }
-
-            if (success) {
-                String messageKey = (selectedBookingId != null) ? "bookingUpdateSuccess" : "bookingSuccess";
-                JOptionPane.showMessageDialog(this, lang.getString(messageKey), lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);
-                loadBookings();
-                clearForm();
+            if (selectedBookingId == null) {
+                // ADD
+                boolean success = bookingController.buatBooking(meja, pelangganId, waktuStr);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Booking successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to add booking. Table might be unavailable or data is invalid.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                String messageKey = (selectedBookingId != null) ? "bookingUpdateFailed" : "bookingFailed";
-                JOptionPane.showMessageDialog(this, lang.getString(messageKey), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
+                // UPDATE
+                boolean success = bookingController.updateBooking(selectedBookingId, meja, pelangganId, waktuStr);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Booking successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to update booking.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, lang.getString("invalidNumber"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
-        } catch (DateTimeParseException ex) {
-            JOptionPane.showMessageDialog(this, lang.getString("invalidTimeFormat") + "\nContoh: 2025-12-31T23:59:00", lang.getString("error"), JOptionPane.ERROR_MESSAGE);
+            loadBookings();
+            clearForm();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Table number and Customer ID must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, "Invalid date/time format. Use YYYY-MM-DDTHH:MM:SS", "Input Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteBooking() {
+        if (selectedBookingId == null) {
+            JOptionPane.showMessageDialog(this, "Please select a booking to delete.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this booking?", "Confirm Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (confirm == JOptionPane.YES_OPTION) {
+            bookingController.deleteBooking(selectedBookingId);
+            JOptionPane.showMessageDialog(this, "Booking successfully deleted.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            loadBookings();
+            clearForm();
         }
     }
     
@@ -198,14 +207,12 @@ public final class BookingForm extends JPanel {
         addOrUpdateBtn.setText(lang.getString("addBooking"));
         clearBtn.setText(lang.getString("clear"));
         refreshBtn.setText(lang.getString("refresh"));
+        deleteBtn.setText("Delete");
         backToLoginBtn.setText(lang.getString("backToLogin"));
         
-        // ** PERBAIKAN DI SINI **
-        // Gunakan referensi border yang sudah disimpan untuk mengubah judul
         formTitleBorder.setTitle(lang.getString("bookingData"));
         tableTitleBorder.setTitle(lang.getString("bookingList"));
         
-        // Meminta panel untuk menggambar ulang agar judul yang baru muncul
         repaint();
 
         tableModel.setColumnIdentifiers(new String[]{
