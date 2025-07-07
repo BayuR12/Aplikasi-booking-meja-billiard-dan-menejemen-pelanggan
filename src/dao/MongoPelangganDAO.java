@@ -5,7 +5,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import model.Pelanggan;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import util.MongoUtil;
 
 import java.util.ArrayList;
@@ -18,11 +17,8 @@ public class MongoPelangganDAO implements PelangganDAO {
     // Helper untuk mengubah Document menjadi objek Pelanggan
     private Pelanggan docToPelanggan(Document doc) {
         if (doc == null) return null;
-        // Di MongoDB, ID default adalah ObjectId. Kita simpan sebagai String di model.
-        // Untuk konsistensi, kita tidak akan menggunakan ID integer.
-        // Namun, jika ingin tetap pakai ID integer, perlu logika tambahan.
         return new Pelanggan(
-                0, // ID integer tidak relevan di MongoDB, kita set 0
+                0, // ID integer tidak relevan di MongoDB, di set 0
                 doc.getString("nama"),
                 doc.getString("email"),
                 doc.getString("password")
@@ -50,8 +46,6 @@ public class MongoPelangganDAO implements PelangganDAO {
     @Override
     public void delete(int id) {
         // Menghapus berdasarkan ID integer tidak praktis di MongoDB.
-        // Sebaiknya ganti interface untuk delete by email atau ObjectId (String).
-        // Untuk saat ini, kita biarkan kosong.
         System.out.println("Fungsi delete by integer ID tidak diimplementasikan untuk MongoDB.");
     }
 

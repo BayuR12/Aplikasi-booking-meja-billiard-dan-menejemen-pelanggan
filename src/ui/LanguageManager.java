@@ -1,4 +1,3 @@
-// File: ui/LanguageManager.java
 package ui;
 
 import java.util.Locale;
@@ -9,7 +8,6 @@ public final class LanguageManager {
     private ResourceBundle bundle;
 
     private LanguageManager() {
-        // Atur bahasa default saat pertama kali dijalankan
         setLanguage("id", "ID"); 
     }
 
@@ -19,7 +17,6 @@ public final class LanguageManager {
 
     public void setLanguage(String language, String country) {
         Locale locale = new Locale(language, country);
-        // Ini adalah baris KUNCI: Muat ulang resource bundle dengan locale yang baru
         bundle = ResourceBundle.getBundle("messages", locale); 
     }
 
@@ -27,7 +24,6 @@ public final class LanguageManager {
         try {
             return bundle.getString(key);
         } catch (Exception e) {
-            // Jika key tidak ditemukan, kembalikan key itu sendiri agar mudah di-debug
             return key;
         }
     }

@@ -13,17 +13,20 @@
             </test-roots>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>akan</word>
             <word>Aktivitas</word>
             <word>Akun</word>
             <word>Alamat</word>
             <word>Anda</word>
             <word>angka</word>
+            <word>Apakah</word>
             <word>Aplikasi</word>
             <word>atau</word>
             <word>Bahasa</word>
             <word>Baru</word>
             <word>Berhasil</word>
             <word>Berkas</word>
+            <word>Bersihkan</word>
             <word>berupa</word>
             <word>Biliard</word>
             <word>boleh</word>
@@ -34,19 +37,24 @@
             <word>Datang</word>
             <word>DDTHH</word>
             <word>dibuat</word>
+            <word>dihapus</word>
             <word>diisi</word>
             <word>diperbarui</word>
             <word>dipesan</word>
+            <word>ditambahkan</word>
             <word>Gagal</word>
             <word>gunakan</word>
+            <word>Hapus</word>
             <word>harus</word>
             <word>Informasi</word>
+            <word>ingin</word>
             <word>ini</word>
             <word>Kata</word>
             <word>ke</word>
             <word>Keluar</word>
             <word>Kembali</word>
             <word>Kesalahan</word>
+            <word>kolom</word>
             <word>Konfirmasi</word>
             <word>kosong</word>
             <word>Lengkap</word>
@@ -55,6 +63,8 @@
             <word>Meja</word>
             <word>membuat</word>
             <word>memperbarui</word>
+            <word>menambahkan</word>
+            <word>menghapus</word>
             <word>mungkin</word>
             <word>nContoh</word>
             <word>nGunakan</word>
@@ -62,6 +72,8 @@
             <word>pada</word>
             <word>Pelanggan</word>
             <word>Perbarui</word>
+            <word>periksa</word>
+            <word>pilih</word>
             <word>Registrasi</word>
             <word>salah</word>
             <word>Sandi</word>
@@ -72,6 +84,7 @@
             <word>Silakan</word>
             <word>Sistem</word>
             <word>sudah</word>
+            <word>Sukses</word>
             <word>Tambah</word>
             <word>Tampilan</word>
             <word>terdaftar</word>
@@ -80,6 +93,7 @@
             <word>tidak</word>
             <word>untuk</word>
             <word>Waktu</word>
+            <word>yakin</word>
             <word>YYYY</word>
         </spellchecker-wordlist>
     </configuration>

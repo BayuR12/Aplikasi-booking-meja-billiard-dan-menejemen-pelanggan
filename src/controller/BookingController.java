@@ -46,7 +46,7 @@ public class BookingController {
         return false;
     }
 
-    // >>> METHOD DELETE BARU DIMULAI DI SINI <<<
+    // Delete
     public void deleteBooking(String id) {
         try {
             bookingDAO.delete(id);
@@ -56,7 +56,6 @@ public class BookingController {
             e.printStackTrace();
         }
     }
-    // >>> METHOD DELETE BARU SELESAI DI SINI <<<
 
     public List<Booking> getAllBookings() {
         return bookingDAO.getAll();

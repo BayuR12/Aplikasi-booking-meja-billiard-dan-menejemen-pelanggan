@@ -20,7 +20,6 @@ public class LoginController {
             if (PasswordUtil.checkPassword(plainPassword, pelanggan.getPassword())) {
                 
                 MongoLogService.log("User logged in: " + email); 
-                // ---------------------------------
                 
                 return true;
             }

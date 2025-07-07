@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import javax.swing.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
 import org.bson.Document;
 import util.MongoUtil;
@@ -13,7 +14,6 @@ public final class LogPanel extends JPanel {
     private final LanguageManager lang = LanguageManager.getInstance();
     private final JTable logTable;
     private final DefaultTableModel tableModel;
-    private final JScrollPane scrollPane;
     private final JButton backButton;
     private final JLabel titleLabel;
 
@@ -27,15 +27,10 @@ public final class LogPanel extends JPanel {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(titleLabel, BorderLayout.NORTH);
 
-        // Setup tabel
         tableModel = new DefaultTableModel();
-        tableModel.addColumn("Activity");
-        tableModel.addColumn("Timestamp");
         logTable = new JTable(tableModel);
-        scrollPane = new JScrollPane(logTable);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(logTable), BorderLayout.CENTER);
         
-        // Tombol kembali
         backButton = new JButton();
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(backButton);
@@ -43,7 +38,6 @@ public final class LogPanel extends JPanel {
         
         backButton.addActionListener(e -> mainFrame.showPanel("booking"));
 
-        // Muat data saat panel ditampilkan
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -55,21 +49,29 @@ public final class LogPanel extends JPanel {
     }
 
     private void loadLogs() {
-        // Hapus data lama
         tableModel.setRowCount(0);
-        // Ambil data baru dari MongoDB
-        MongoCollection<Document> logs = MongoUtil.getDatabase().getCollection("logs");
-        try (MongoCursor<Document> cursor = logs.find().iterator()) {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                tableModel.addRow(new Object[]{doc.getString("activity"), doc.getDate("timestamp").toString()});
+        try {
+            MongoCollection<Document> logs = MongoUtil.getDatabase().getCollection("logs");
+            try (MongoCursor<Document> cursor = logs.find().sort(new Document("timestamp", -1)).iterator()) {
+                while (cursor.hasNext()) {
+                    Document doc = cursor.next();
+                    String activity = doc.getString("activity");
+                    java.util.Date timestamp = doc.getDate("timestamp");
+                    
+                    String formattedDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(timestamp);
+                    
+                    tableModel.addRow(new Object[]{activity, formattedDate});
+                }
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data log: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
     public void updateTexts() {
         titleLabel.setText(lang.getString("viewLogsMenu"));
-        backButton.setText(lang.getString("backToBooking")); // Anda perlu menambahkan kunci ini
-        tableModel.setColumnIdentifiers(new String[]{lang.getString("logActivity"), lang.getString("logTimestamp")}); // Dan ini
+        backButton.setText(lang.getString("backToBooking"));
+        tableModel.setColumnIdentifiers(new String[]{lang.getString("logActivity"), lang.getString("logTimestamp")});
     }
 }

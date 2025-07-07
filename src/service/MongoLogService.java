@@ -2,26 +2,22 @@ package service;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import org.bson.Document;
 import util.MongoUtil;
 
 public class MongoLogService {
+    private static final MongoDatabase db = MongoUtil.getDatabase();
+    private static final MongoCollection<Document> logs = db.getCollection("logs");
 
-    public static void log(String message) {
+    public static void log(String activity) {
+        System.out.println("LOGGING: " + activity);
         try {
-            MongoDatabase db = MongoUtil.getDatabase();
-            MongoCollection<Document> logCollection = db.getCollection("logs");
-            
-            Document logDoc = new Document()
-                    .append("timestamp", Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-                    .append("message", message);
-            
-            logCollection.insertOne(logDoc);
+            Document log = new Document("activity", activity)
+                    .append("timestamp", new Date());
+            logs.insertOne(log);
         } catch (Exception e) {
-            System.err.println("Failed to write log to MongoDB: " + e.getMessage());
+            System.err.println("Gagal menyimpan log ke database!");
             e.printStackTrace();
         }
     }

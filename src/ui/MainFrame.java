@@ -31,50 +31,40 @@ public final class MainFrame extends JFrame {
 
     public MainFrame() {
         initComponents();
-        
-        // Hapus baris ini agar jendela tidak langsung maximized
-        // setExtendedState(JFrame.MAXIMIZED_BOTH); 
 
         bookingCheckerThread = new BookingCheckerThread();
         bookingCheckerThread.start();
 
-        // Mengatur listener untuk event penutupan jendela
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // Logika untuk menutup resource dengan aman
                 bookingCheckerThread.stopThread();
                 MongoUtil.close();
-                System.exit(0); // Keluar dari aplikasi
+                System.exit(0);
             }
         });
     }
 
     private void initComponents() {
-        // Atur agar listener yang menangani penutupan, bukan aksi default
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
         
-        // Atur ukuran jendela default agar tidak layar penuh
         setSize(1280, 720);
-        setMinimumSize(new Dimension(800, 600)); // Ukuran minimum agar UI tidak rusak
-        setLocationRelativeTo(null); // Posisi jendela di tengah layar
+        setMinimumSize(new Dimension(800, 600));
+        setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Inisialisasi semua panel
         loginPanel = new LoginPanel(this);
         registerPanel = new RegisterPanel(this);
         bookingForm = new BookingForm(this);
         logPanel = new LogPanel(this);
 
-        // Menambahkan panel ke CardLayout
         mainPanel.add(loginPanel, "login");
         mainPanel.add(registerPanel, "register");
         mainPanel.add(bookingForm, "booking");
         mainPanel.add(logPanel, "logs");
 
-        // Menambahkan Menu Bar
         setupMenuBar();
 
         add(mainPanel);
@@ -103,7 +93,6 @@ public final class MainFrame extends JFrame {
         menuBar.add(languageMenu);
         setJMenuBar(menuBar);
 
-        // Action Listeners for Menu
         exitMenuItem.addActionListener(e -> dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
         viewLogsMenuItem.addActionListener(e -> showPanel("logs"));
         indonesianMenuItem.addActionListener(e -> changeLanguage("id", "ID"));

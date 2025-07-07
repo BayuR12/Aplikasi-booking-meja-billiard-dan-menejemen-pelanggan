@@ -17,7 +17,6 @@ public final class BookingForm extends JPanel {
     private final LanguageManager lang = LanguageManager.getInstance();
     private final MainFrame mainFrame;
 
-    // Komponen UI
     private JTable bookingTable;
     private DefaultTableModel tableModel;
     private JButton addOrUpdateBtn, clearBtn, backToLoginBtn, refreshBtn, deleteBtn;
@@ -34,10 +33,8 @@ public final class BookingForm extends JPanel {
         
         setLayout(new BorderLayout(10, 10));
         
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(4, 2, 10, 10));
-        
-        formTitleBorder = BorderFactory.createTitledBorder(lang.getString("bookingData"));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        formTitleBorder = BorderFactory.createTitledBorder("");
         formPanel.setBorder(BorderFactory.createCompoundBorder(formTitleBorder, BorderFactory.createEmptyBorder(10,10,10,10)));
 
         mejaLabel = new JLabel();
@@ -61,11 +58,10 @@ public final class BookingForm extends JPanel {
         formPanel.add(clearBtn);
 
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tableTitleBorder = BorderFactory.createTitledBorder(lang.getString("bookingList"));
+        tableTitleBorder = BorderFactory.createTitledBorder("");
         tablePanel.setBorder(tableTitleBorder);
 
-        String[] columnNames = {"ID", "Table", "Customer ID", "Time"};
-        tableModel = new DefaultTableModel(columnNames, 0) {
+        tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -73,11 +69,6 @@ public final class BookingForm extends JPanel {
         };
         bookingTable = new JTable(tableModel);
         bookingTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        bookingTable.getColumnModel().getColumn(0).setMinWidth(0);
-        bookingTable.getColumnModel().getColumn(0).setMaxWidth(0);
-        bookingTable.getColumnModel().getColumn(0).setWidth(0);
-
         tablePanel.add(new JScrollPane(bookingTable), BorderLayout.CENTER);
         
         JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -92,7 +83,6 @@ public final class BookingForm extends JPanel {
         add(tablePanel, BorderLayout.CENTER);
         add(bottomButtonPanel, BorderLayout.SOUTH);
 
-        // Action Listeners
         backToLoginBtn.addActionListener(e -> mainFrame.showPanel("login"));
         refreshBtn.addActionListener(e -> {
             loadBookings();
@@ -135,20 +125,20 @@ public final class BookingForm extends JPanel {
             String waktuStr = waktuField.getText();
 
             if (selectedBookingId == null) {
-                // ADD
+                // Tambah Booking Baru
                 boolean success = bookingController.buatBooking(meja, pelangganId, waktuStr);
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Booking successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, lang.getString("bookingAddedSuccess"), lang.getString("success"), JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Failed to add booking. Table might be unavailable or data is invalid.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, lang.getString("bookingAddedFailed"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                // UPDATE
+                // Perbarui Booking
                 boolean success = bookingController.updateBooking(selectedBookingId, meja, pelangganId, waktuStr);
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Booking successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, lang.getString("bookingUpdatedSuccess"), lang.getString("success"), JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Failed to update booking.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, lang.getString("bookingUpdatedFailed"), lang.getString("error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
             loadBookings();
@@ -157,21 +147,26 @@ public final class BookingForm extends JPanel {
             JOptionPane.showMessageDialog(this, "Table number and Customer ID must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(this, "Invalid date/time format. Use YYYY-MM-DDTHH:MM:SS", "Input Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
     }
 
     private void deleteBooking() {
         if (selectedBookingId == null) {
-            JOptionPane.showMessageDialog(this, "Please select a booking to delete.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, lang.getString("selectBookingToDelete"), lang.getString("info"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this booking?", "Confirm Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            lang.getString("confirmDeletionMessage"),
+            lang.getString("confirmDeletionTitle"),
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+
         if (confirm == JOptionPane.YES_OPTION) {
             bookingController.deleteBooking(selectedBookingId);
-            JOptionPane.showMessageDialog(this, "Booking successfully deleted.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, lang.getString("bookingDeletedSuccess"), lang.getString("success"), JOptionPane.INFORMATION_MESSAGE);
             loadBookings();
             clearForm();
         }
@@ -201,27 +196,30 @@ public final class BookingForm extends JPanel {
     }
     
     public void updateTexts(){
-        mejaLabel.setText(lang.getString("tableNumber"));
-        pelangganLabel.setText(lang.getString("customerId"));
-        waktuLabel.setText(lang.getString("bookingTime"));
-        addOrUpdateBtn.setText(lang.getString("addBooking"));
-        clearBtn.setText(lang.getString("clear"));
-        refreshBtn.setText(lang.getString("refresh"));
-        deleteBtn.setText("Delete");
-        backToLoginBtn.setText(lang.getString("backToLogin"));
-        
         formTitleBorder.setTitle(lang.getString("bookingData"));
         tableTitleBorder.setTitle(lang.getString("bookingList"));
         
-        repaint();
-
+        mejaLabel.setText(lang.getString("tableNumber"));
+        pelangganLabel.setText(lang.getString("customerId"));
+        waktuLabel.setText(lang.getString("bookingTime"));
+        
+        addOrUpdateBtn.setText(lang.getString("addBooking"));
+        clearBtn.setText(lang.getString("clear"));
+        refreshBtn.setText(lang.getString("refresh"));
+        deleteBtn.setText(lang.getString("deleteBooking"));
+        backToLoginBtn.setText(lang.getString("backToLogin"));
+        
         tableModel.setColumnIdentifiers(new String[]{
             "ID",
             lang.getString("tableNumber"),
             lang.getString("customerId"),
             lang.getString("bookingTime")
         });
+        
         bookingTable.getColumnModel().getColumn(0).setMinWidth(0);
         bookingTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        bookingTable.getColumnModel().getColumn(0).setWidth(0);
+
+        repaint();
     }
 }

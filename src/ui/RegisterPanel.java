@@ -13,7 +13,6 @@ public final class RegisterPanel extends JPanel {
     private final PelangganController pelangganController;
     private final LanguageManager lang = LanguageManager.getInstance();
 
-    // Deklarasikan komponen sebagai field
     private JLabel nameLabel, emailLabel, passLabel, confirmPassLabel;
     private JButton registerBtn, backBtn;
 
