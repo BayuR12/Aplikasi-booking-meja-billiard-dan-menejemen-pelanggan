@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -14,20 +15,48 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import util.MongoUtil;
 
-// Pastikan kelas ini mengimplementasikan interface BookingDAO
 public class MongoBookingDAO implements BookingDAO {
 
     private final MongoDatabase db = MongoUtil.getDatabase();
     private final MongoCollection<Document> collection = db.getCollection("bookings");
+    private final String bookingFile = "bookings_backup.dat";
 
     @Override
     public void insert(Booking b) {
-        Document doc = new Document("meja", b.getMeja())
-                .append("pelangganId", b.getPelangganId())
-                .append("waktu", Date.from(b.getWaktu().atZone(ZoneId.systemDefault()).toInstant()));
-        collection.insertOne(doc);
+        try {
+            Document doc = new Document("meja", b.getMeja())
+                    .append("pelangganId", b.getPelangganId())
+                    .append("waktu", Date.from(b.getWaktu().atZone(ZoneId.systemDefault()).toInstant()));
+            collection.insertOne(doc);
+            System.out.println("✅ Berhasil menyimpan ke Database MongoDB.");
+        } catch (Exception e) {
+            System.err.println("❌ Gagal menyimpan ke MongoDB: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("Menyimpan backup ke File...");
+        saveToFile(b);
+    }
+
+    private void saveToFile(Booking booking) {
+        File file = new File(bookingFile);
+        try (FileOutputStream fos = new FileOutputStream(file, true)) {
+            if (file.length() == 0) {
+                try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                    oos.writeObject(booking);
+                }
+            } else {
+                try (AppendingObjectOutputStream aoos = new AppendingObjectOutputStream(fos)) {
+                    aoos.writeObject(booking);
+                }
+            }
+            System.out.println("✅ Berhasil menyimpan backup ke File.");
+        } catch (IOException e) {
+            System.err.println("❌ Gagal menyimpan backup ke File: " + e.getMessage());
+        }
     }
     
+
     @Override
     public void update(Booking b) {
         ObjectId objectId = new ObjectId(b.getId());
@@ -39,19 +68,16 @@ public class MongoBookingDAO implements BookingDAO {
                 ));
     }
 
-    // >>> IMPLEMENTASI METHOD DELETE DIMULAI DI SINI <<<
     @Override
     public void delete(String id) {
         try {
-            // Konversi String ID menjadi ObjectId untuk query ke MongoDB
             ObjectId objectId = new ObjectId(id);
             collection.deleteOne(Filters.eq("_id", objectId));
-            System.out.println("Booking dengan ID " + id + " berhasil dihapus.");
+            System.out.println("Booking dengan ID " + id + " berhasil dihapus dari MongoDB.");
         } catch (IllegalArgumentException e) {
             System.err.println("Error: ID tidak valid. " + e.getMessage());
         }
     }
-    // >>> IMPLEMENTASI METHOD DELETE SELESAI DI SINI <<<
 
     private Booking docToBooking(Document doc) {
         if (doc == null) return null;
@@ -87,5 +113,17 @@ public class MongoBookingDAO implements BookingDAO {
                                 .append("$lt", Date.from(oneHourAfter.atZone(ZoneId.systemDefault()).toInstant())));
         
         return collection.find(query).first() == null;
+    }
+}
+
+
+class AppendingObjectOutputStream extends ObjectOutputStream {
+    public AppendingObjectOutputStream(OutputStream out) throws IOException {
+        super(out);
+    }
+
+    @Override
+    protected void writeStreamHeader() throws IOException {
+        reset();
     }
 }

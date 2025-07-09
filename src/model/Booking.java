@@ -1,22 +1,22 @@
-// src/model/Booking.java
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Booking {
-    private String id; // Diubah dari int ke String
+public class Booking implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String id;
     private int meja;
     private int pelangganId;
     private LocalDateTime waktu;
 
-    // Konstruktor untuk membuat booking baru (ID akan dibuat oleh DB)
     public Booking(int meja, int pelangganId, LocalDateTime waktu) {
         this.meja = meja;
         this.pelangganId = pelangganId;
         this.waktu = waktu;
     }
-    
-    // Konstruktor untuk booking yang sudah ada dari DB
+
     public Booking(String id, int meja, int pelangganId, LocalDateTime waktu) {
         this.id = id;
         this.meja = meja;
@@ -24,7 +24,6 @@ public class Booking {
         this.waktu = waktu;
     }
 
-    // Getters dan Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     

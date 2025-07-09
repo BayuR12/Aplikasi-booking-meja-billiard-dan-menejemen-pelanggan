@@ -1,6 +1,10 @@
 package model;
 
-public class Pelanggan {
+import java.io.Serializable;
+
+public class Pelanggan implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int id;
     private String nama;
     private String email;
@@ -25,6 +29,6 @@ public class Pelanggan {
     public void setNama(String nama) { this.nama = nama; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public String getPassword() { return password; } // Ditambahkan
-    public void setPassword(String password) { this.password = password; } // Ditambahkan
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
